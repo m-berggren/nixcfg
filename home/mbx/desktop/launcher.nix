@@ -1,13 +1,13 @@
 # App launcher (Super+Space) and dmenu backend for the clipboard picker.
 # fuzzel is Wayland-native, tiny, and themed automatically by Stylix.
-{ ... }:
+{ config, ... }:
 
 {
   programs.fuzzel = {
     enable = true;
     settings = {
       main = {
-        terminal = "ghostty -e";
+        terminal = "${config.local.terminal} -e";
         layer = "overlay";
         width = 45;
       };

@@ -51,6 +51,21 @@
     };
   };
 
+  # On-screen-display server for volume/brightness/caps popups. The keybinds in
+  # hyprland.nix call swayosd-client, which performs the change and shows the OSD.
+  systemd.user.services.swayosd = {
+    Unit = {
+      description = "swayosd on-screen display server";
+      after = [ "graphical-session.target" ];
+      partOf = [ "graphical-session.target" ];
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+    Service = {
+      ExecStart = "${pkgs.swayosd}/bin/swayosd-server";
+      Restart = "on-failure";
+    };
+  };
+
   # Polkit authentication agent (GUI privilege prompts).
   systemd.user.services.hyprpolkitagent = {
     Unit = {

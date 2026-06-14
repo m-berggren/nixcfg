@@ -1,11 +1,11 @@
 # Hyprland, expressed natively in Nix. Monitor/workspace/device data comes from the
 # host (osConfig.host.*); everything else here is user preference. No omarchy-* helpers:
-# launching is fuzzel, browser is Zen, media/brightness use wpctl/brightnessctl,
+# launching is fuzzel, browser is Zen, media/brightness use swayosd-client (OSD popup),
 # screenshots use grimblast. Border colors and cursor come from Stylix.
-{ lib, osConfig, ... }:
+{ lib, config, osConfig, ... }:
 
 let
-  terminal = "ghostty";
+  terminal = config.local.terminal;
   # Workspace switch + move-to-workspace for 1..10 (10 bound to the "0" key).
   workspaceBinds = lib.concatLists (
     lib.genList (
@@ -38,7 +38,7 @@ in
       "$terminal" = terminal;
       "$browser" = "zen";
       "$fileManager" = "nautilus --new-window";
-      "$editor" = "ghostty -e nvim";
+      "$editor" = "${terminal} -e nvim";
       "$menu" = "fuzzel";
 
       # Host-provided hardware facts.
@@ -110,7 +110,7 @@ in
           "$mod SHIFT, B, exec, $browser"
           "$mod SHIFT, F, exec, $fileManager"
           "$mod SHIFT, N, exec, $editor"
-          "$mod SHIFT, T, exec, ghostty -e btop"
+          "$mod SHIFT, T, exec, $terminal -e btop"
           "$mod SHIFT, M, exec, spotify"
           "$mod SHIFT, L, exec, logseq"
           "$mod SHIFT, slash, exec, bitwarden"
@@ -183,16 +183,16 @@ in
 
       # Repeat + work while locked: volume and brightness.
       bindel = [
-        ", XF86AudioRaiseVolume, exec, wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+"
-        ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
-        ", XF86MonBrightnessUp, exec, brightnessctl s 5%+"
-        ", XF86MonBrightnessDown, exec, brightnessctl s 5%-"
+        ", XF86AudioRaiseVolume, exec, swayosd-client --output-volume raise"
+        ", XF86AudioLowerVolume, exec, swayosd-client --output-volume lower"
+        ", XF86MonBrightnessUp, exec, swayosd-client --brightness raise"
+        ", XF86MonBrightnessDown, exec, swayosd-client --brightness lower"
       ];
 
       # Media keys (work while locked, no repeat).
       bindl = [
-        ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
-        ", XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
+        ", XF86AudioMute, exec, swayosd-client --output-volume mute-toggle"
+        ", XF86AudioMicMute, exec, swayosd-client --input-volume mute-toggle"
         ", XF86AudioPlay, exec, playerctl play-pause"
         ", XF86AudioNext, exec, playerctl next"
         ", XF86AudioPrev, exec, playerctl previous"

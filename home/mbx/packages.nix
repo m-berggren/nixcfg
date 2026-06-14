@@ -39,6 +39,9 @@ in
     # Audio control panel (waybar right-click)
     pavucontrol
 
+    # On-screen display for volume/brightness (swayosd-client used in hypr binds)
+    swayosd
+
     # Screenshot / color picker (Hyprland keybindings)
     grimblast
     hyprpicker
